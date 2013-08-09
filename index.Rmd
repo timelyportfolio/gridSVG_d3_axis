@@ -77,7 +77,7 @@ rollCorr <- na.omit(runCor(returns[,1],returns[,2],90))
 
 Draw a graph with lattice `xyplot` of our 90-day rolling correlation of returns.  We'll make it very simple, so we can focus our attention on the important elements.  Once our graph is drawn, let's use `grid.export("")` to export the grid to SVG.  Again if the rolling correlation data scares you, here is where you can sub `p <- xyplot(AirPassengers` in place of `p <- xyplot(rollCorr`.
 
-```{r fig.keep="none"}
+```{r fig.keep="last"}
 p <- xyplot(
   rollCorr,
   scales = list( x = list(tck=c(1,0))),
@@ -148,10 +148,10 @@ d3.select(".yaxis").selectAll("text")
    
 ```
 
-We will steal from our previous post to accomplish a mouseover effect.  When we mouseover the chart, our new y axis will move to our mouse position.  Then we mouseout, we use d3 `transition()` to smoothly dock our axis in its slip.
+We will steal from our previous post to accomplish a mouseover effect.  When we mouseover the chart, our new y axis will move to our mouse position.  Then when we mouseout, we use d3 `transition()` to smoothly dock our axis in its slip.
 
-``
-d3`.select("#gridSVG").append("rect")
+```
+d3.select("#gridSVG").append("rect")
     .attr("class", "overlay")
     .attr("x", d3.selectAll("defs [id*='plot_01.panel.1.1.vp.2.clipPath'] rect").attr("x"))
     .attr("y", d3.selectAll("defs [id*='plot_01.panel.1.1.vp.2.clipPath'] rect").attr("y"))
@@ -172,6 +172,10 @@ function mousemove() {
 ```
 
 <script>
+d3.select("svg").append("text")
+    .text("try me | I have special powers")
+    .attr("y", 20)
+
 var yScale = d3.scale.linear(),
     yAxis = d3.svg.axis(),  
     yAxisCoords = coords["plot_01.toplevel.vp::plot_01.panel.1.1.vp.1"];
@@ -220,3 +224,5 @@ function mousemove() {
   d3.select(".yaxis").attr("transform", "translate(" + x0 + ",0)");
 }
 </script>
+
+Bring on the comments and suggestions.  Collective creativity will be far more expansive than my own bounded creativity.

@@ -115,6 +115,8 @@ p
 mysvg &lt;- grid.export(&quot;&quot;)
 </code></pre>
 
+<p><img src="assets/fig/unnamed-chunk-3.png" alt="plot of chunk unnamed-chunk-3"> </p>
+
 <p>Unlike previous posts we will not send our actual data.  Instead, we will send the gridSVG coordinate translation data to Javascript as JSON.  To make a nice <code>d3.svg.axis()</code> we will need to know the position, limits, and coordinates of the axis.  Thoughtfully, the authors of gridSVG provide this by default.</p>
 
 <pre><code class="r">cat(
@@ -130,7 +132,7 @@ coords =&#39;,
 
 <p><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="720px" height="432px" viewBox="0 0 720 432" version="1.1">
   <metadata xmlns:gridsvg="http://www.stat.auckland.ac.nz/~paul/R/gridSVG/">
-    <gridsvg:generator name="gridSVG" version="1.3-0" time="2013-08-09 12:13:58"/>
+    <gridsvg:generator name="gridSVG" version="1.3-0" time="2013-08-09 12:24:09"/>
     <gridsvg:argument name="name" value=""/>
     <gridsvg:argument name="exportCoords" value="none"/>
     <gridsvg:argument name="exportMappings" value="none"/>
@@ -413,61 +415,9 @@ d3.select(&quot;.yaxis&quot;).selectAll(&quot;text&quot;)
 
 </code></pre>
 
-<p>We will steal from our previous post to accomplish a mouseover effect.  When we mouseover the chart, our new y axis will move to our mouse position.  Then we mouseout, we use d3 <code>transition()</code> to smoothly dock our axis in its slip.</p>
+<p>We will steal from our previous post to accomplish a mouseover effect.  When we mouseover the chart, our new y axis will move to our mouse position.  Then when we mouseout, we use d3 <code>transition()</code> to smoothly dock our axis in its slip.</p>
 
-<p>`<code>
-d3</code>.select(&quot;#gridSVG&quot;).append(&quot;rect&quot;)
-    .attr(&quot;class&quot;, &quot;overlay&quot;)
-    .attr(&quot;x&quot;, d3.selectAll(&quot;defs [id<em>=&#39;plot_01.panel.1.1.vp.2.clipPath&#39;] rect&quot;).attr(&quot;x&quot;))
-    .attr(&quot;y&quot;, d3.selectAll(&quot;defs [id</em>=&#39;plot_01.panel.1.1.vp.2.clipPath&#39;] rect&quot;).attr(&quot;y&quot;))
-    .attr(&quot;width&quot;, d3.selectAll(&quot;defs [id<em>=&#39;plot_01.panel.1.1.vp.2.clipPath&#39;] rect&quot;).attr(&quot;width&quot;))
-    .attr(&quot;height&quot;, d3.selectAll(&quot;defs [id</em>=&#39;plot_01.panel.1.1.vp.2.clipPath&#39;] rect&quot;).attr(&quot;height&quot;))
-    .attr(&quot;fill&quot;, &quot;none&quot;)
-    .attr(&quot;stroke&quot;, &quot;none&quot;)
-    .attr(&quot;pointer-events&quot;,&quot;all&quot;)
-    //.on(&quot;mouseover&quot;, function() { focus.style(&quot;display&quot;, null); })
-    .on(&quot;mouseout&quot;, function() { d3.select(&quot;.yaxis&quot;).transition().attr(&quot;transform&quot;, &quot;translate(&quot; + yAxisCoords.x + &quot;,0)&quot;) })
-    .on(&quot;mousemove&quot;, mousemove);</p>
-
-<p>function mousemove() {
-  var x0 = d3.mouse(this)[0]
-  d3.select(&quot;.yaxis&quot;).attr(&quot;transform&quot;, &quot;translate(&quot; + x0 + &quot;,0)&quot;);
-}
-</script></p>
-
-<pre><code>
-&lt;script&gt;
-var yScale = d3.scale.linear(),
-    yAxis = d3.svg.axis(),  
-    yAxisCoords = coords[&quot;plot_01.toplevel.vp::plot_01.panel.1.1.vp.1&quot;];
-
-//in yscale we have our domain or in R-speak ylim
-yScale.domain(yAxisCoords.yscale);
-//then we will need the coordinates that match these limits
-yScale.range([yAxisCoords.y,yAxisCoords.height+yAxisCoords.y]);
-
-//we have a scale now that we can give our y Axis
-yAxis
-  .scale(yScale)
-  .orient(&quot;left&quot;)
-  .ticks(5);
-
-d3.select(&quot;#gridSVG&quot;).append(&quot;g&quot;)
-    .attr(&quot;class&quot;, &quot;yaxis&quot;)
-    .attr(&quot;transform&quot;, &quot;translate(&quot; + yAxisCoords.x + &quot;,0)&quot;)
-    .call(yAxis);
-
-//gridSVG uses scale(1,-1) so we need to counteract on text
-//so that it is not flipped
-d3.select(&quot;.yaxis&quot;).selectAll(&quot;text&quot;)
-    .attr(&quot;transform&quot;,&quot;scale(1,-1)&quot;)
-    .attr(&quot;fill&quot;,&quot;black&quot;)
-    .attr(&quot;fill-opacity&quot;,1)
-    .attr(&quot;stroke&quot;,&quot;black&quot;)
-    .attr(&quot;stroke-opacity&quot;,1)
-    .text(function(d) {return d3.format(&quot;0.0%&quot;)(d)});
-
-d3.select(&quot;#gridSVG&quot;).append(&quot;rect&quot;)
+<pre><code>d3.select(&quot;#gridSVG&quot;).append(&quot;rect&quot;)
     .attr(&quot;class&quot;, &quot;overlay&quot;)
     .attr(&quot;x&quot;, d3.selectAll(&quot;defs [id*=&#39;plot_01.panel.1.1.vp.2.clipPath&#39;] rect&quot;).attr(&quot;x&quot;))
     .attr(&quot;y&quot;, d3.selectAll(&quot;defs [id*=&#39;plot_01.panel.1.1.vp.2.clipPath&#39;] rect&quot;).attr(&quot;y&quot;))
@@ -486,6 +436,62 @@ function mousemove() {
 }
 &lt;/script&gt;
 </code></pre>
+
+<script>
+d3.select("svg").append("text")
+    .text("try me | I have special powers")
+    .attr("y", 20)
+
+var yScale = d3.scale.linear(),
+    yAxis = d3.svg.axis(),  
+    yAxisCoords = coords["plot_01.toplevel.vp::plot_01.panel.1.1.vp.1"];
+
+//in yscale we have our domain or in R-speak ylim
+yScale.domain(yAxisCoords.yscale);
+//then we will need the coordinates that match these limits
+yScale.range([yAxisCoords.y,yAxisCoords.height+yAxisCoords.y]);
+
+//we have a scale now that we can give our y Axis
+yAxis
+  .scale(yScale)
+  .orient("left")
+  .ticks(5);
+
+d3.select("#gridSVG").append("g")
+    .attr("class", "yaxis")
+    .attr("transform", "translate(" + yAxisCoords.x + ",0)")
+    .call(yAxis);
+
+//gridSVG uses scale(1,-1) so we need to counteract on text
+//so that it is not flipped
+d3.select(".yaxis").selectAll("text")
+    .attr("transform","scale(1,-1)")
+    .attr("fill","black")
+    .attr("fill-opacity",1)
+    .attr("stroke","black")
+    .attr("stroke-opacity",1)
+    .text(function(d) {return d3.format("0.0%")(d)});
+    
+d3.select("#gridSVG").append("rect")
+    .attr("class", "overlay")
+    .attr("x", d3.selectAll("defs [id*='plot_01.panel.1.1.vp.2.clipPath'] rect").attr("x"))
+    .attr("y", d3.selectAll("defs [id*='plot_01.panel.1.1.vp.2.clipPath'] rect").attr("y"))
+    .attr("width", d3.selectAll("defs [id*='plot_01.panel.1.1.vp.2.clipPath'] rect").attr("width"))
+    .attr("height", d3.selectAll("defs [id*='plot_01.panel.1.1.vp.2.clipPath'] rect").attr("height"))
+    .attr("fill", "none")
+    .attr("stroke", "none")
+    .attr("pointer-events","all")
+    //.on("mouseover", function() { focus.style("display", null); })
+    .on("mouseout", function() { d3.select(".yaxis").transition().attr("transform", "translate(" + yAxisCoords.x + ",0)") })
+    .on("mousemove", mousemove);
+    
+function mousemove() {
+  var x0 = d3.mouse(this)[0]
+  d3.select(".yaxis").attr("transform", "translate(" + x0 + ",0)");
+}
+</script>
+
+<p>Bring on the comments and suggestions.  Collective creativity will be far more expansive than my own bounded creativity.</p>
 
     </div>
         

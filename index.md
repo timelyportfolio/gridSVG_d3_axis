@@ -90,6 +90,8 @@ p
 mysvg <- grid.export("")
 ```
 
+![plot of chunk unnamed-chunk-3](assets/fig/unnamed-chunk-3.png) 
+
 
 Unlike previous posts we will not send our actual data.  Instead, we will send the gridSVG coordinate translation data to Javascript as JSON.  To make a nice `d3.svg.axis()` we will need to know the position, limits, and coordinates of the axis.  Thoughtfully, the authors of gridSVG provide this by default.
 
@@ -108,7 +110,7 @@ coords =',
 
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="720px" height="432px" viewBox="0 0 720 432" version="1.1">
   <metadata xmlns:gridsvg="http://www.stat.auckland.ac.nz/~paul/R/gridSVG/">
-    <gridsvg:generator name="gridSVG" version="1.3-0" time="2013-08-09 12:13:58"/>
+    <gridsvg:generator name="gridSVG" version="1.3-0" time="2013-08-09 12:24:09"/>
     <gridsvg:argument name="name" value=""/>
     <gridsvg:argument name="exportCoords" value="none"/>
     <gridsvg:argument name="exportMappings" value="none"/>
@@ -394,10 +396,10 @@ d3.select(".yaxis").selectAll("text")
    
 ```
 
-We will steal from our previous post to accomplish a mouseover effect.  When we mouseover the chart, our new y axis will move to our mouse position.  Then we mouseout, we use d3 `transition()` to smoothly dock our axis in its slip.
+We will steal from our previous post to accomplish a mouseover effect.  When we mouseover the chart, our new y axis will move to our mouse position.  Then when we mouseout, we use d3 `transition()` to smoothly dock our axis in its slip.
 
-``
-d3`.select("#gridSVG").append("rect")
+```
+d3.select("#gridSVG").append("rect")
     .attr("class", "overlay")
     .attr("x", d3.selectAll("defs [id*='plot_01.panel.1.1.vp.2.clipPath'] rect").attr("x"))
     .attr("y", d3.selectAll("defs [id*='plot_01.panel.1.1.vp.2.clipPath'] rect").attr("y"))
@@ -418,6 +420,10 @@ function mousemove() {
 ```
 
 <script>
+d3.select("svg").append("text")
+    .text("try me | I have special powers")
+    .attr("y", 20)
+
 var yScale = d3.scale.linear(),
     yAxis = d3.svg.axis(),  
     yAxisCoords = coords["plot_01.toplevel.vp::plot_01.panel.1.1.vp.1"];
@@ -466,3 +472,5 @@ function mousemove() {
   d3.select(".yaxis").attr("transform", "translate(" + x0 + ",0)");
 }
 </script>
+
+Bring on the comments and suggestions.  Collective creativity will be far more expansive than my own bounded creativity.
